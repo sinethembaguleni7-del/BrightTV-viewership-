@@ -1,0 +1,46 @@
+WITH combined AS (
+    SELECT
+        U.USERID,
+        U.PROVINCE,
+        U.RACE,
+        U.GENDER,
+        U.NAME,
+        U.SURNAME,
+        U.EMAIL,
+        U.SOCIAL_MEDIA_HANDLE,
+        A.CHANNEL2,
+        A.RECORDDATE2,
+
+        -- Convert record date
+        TO_TIMESTAMP(A.RECORDDATE2, 'YYYY/MM/DD HH24:MI') AS RECORD_TS,
+
+        -- Month name
+        INITCAP(TO_CHAR(TO_TIMESTAMP(A.RECORDDATE2, 'YYYY/MM/DD HH24:MI'), 'Month')) AS MONTH_NAME,
+
+        -- Day name (full: Monday, Tuesday, …)
+        TRIM(TO_CHAR(TO_TIMESTAMP(A.RECORDDATE2, 'YYYY/MM/DD HH24:MI'), 'DAY')) AS DAY_NAME,
+
+        -- Duration category
+        CASE
+            WHEN (DATE_PART(SECOND, A.duration2)
+                  + DATE_PART(MINUTE, A.duration2) * 60
+                  + DATE_PART(HOUR, A.duration2) * 3600) < 60
+              THEN 'Short (<1 min)'
+            WHEN (DATE_PART(SECOND, A.duration2)
+                  + DATE_PART(MINUTE, A.duration2) * 60
+                  + DATE_PART(HOUR, A.duration2) * 3600) BETWEEN 60 AND 120
+              THEN 'Medium (1-2 min)'
+            ELSE 'Long (>2 min)'
+        END AS duration_category
+    FROM VIEWERSHIP.PUBLIC.SHOP A
+    JOIN USERPROFILE.PUBLIC.SHOP U
+      ON A.USERID = U.USERID
+)
+
+SELECT 
+    C.*,
+    -- Add totals into each row
+    (SELECT COUNT(DISTINCT USERID) FROM combined)   AS TOTAL_NUMBER_OF_VIEWERS,
+    (SELECT COUNT(*) FROM combined)                 AS TOTAL_NUMBER_OF_VIEWS,
+    (SELECT COUNT(DISTINCT CHANNEL2) FROM combined) AS TOTAL_NUMBER_OF_CHANNELS
+FROM combined C;
