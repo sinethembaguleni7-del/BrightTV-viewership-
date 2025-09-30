@@ -31,7 +31,7 @@ README.md Objectives
 * To identify trends in audience engagement across different provinces, days, and user profiles.
 * To provide actionable insights that can support BrightTV’s strategic decisions and content planning.
 
-Tools and Technologies
+# Tools and Technologies
 
 SQL for data querying and analysis.
 Excel/CSV for raw data storage and initial data cleaning.
