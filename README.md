@@ -76,6 +76,4 @@ Make sure you have the following installed:
 Sinethemba Guleni (Repository Owner)
 Additional contributions are welcome via pull requests.
 
----
 
-📌 This project is part of BrightTV’s ongoing initiative to improve audience understanding and optimize programming for maximum reach.
